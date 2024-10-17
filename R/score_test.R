@@ -1,5 +1,5 @@
 
-#' @importFrom Matrix Diagonal
+#' @importFrom Matrix Diagonal colSums
 score_test_inner <- function(X, Z, res, mu) {
   W <- Diagonal(x=mu)
   XtW <- as.matrix(t(X) %*% W)

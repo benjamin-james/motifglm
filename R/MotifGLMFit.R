@@ -1,5 +1,7 @@
 
 #' Fit Motifs
+#' @importFrom Matrix rowMeans
+#' @importFrom S4Vectors metadata
 #' @export
 motif_fit <- function(motif_se, feat_mat=NULL, covariates=NULL, use_expected=TRUE, size_factors="poscounts", verbose=TRUE, model="glmGamPoi", BPPARAM=bpparam(), ...) {
   require(Matrix)
@@ -15,12 +17,11 @@ motif_fit <- function(motif_se, feat_mat=NULL, covariates=NULL, use_expected=TRU
     M <- M[,comm_feat]
   }
   if (is.null(covariates)) {
-      covariates <- S4Vectors::metadata(motif_se)$covariates
+      covariates <- metadata(motif_se)$covariates
   }
   col_data <- as.data.frame(rowData(motif_se))[comm_feat, covariates, drop=FALSE]
-  feat_mat <- feat_mat[comm_feat,]
   if (use_expected && (ncol(feat_mat) > 1)) {
-    col_data$expected <- rowMeans(feat_mat)
+    col_data$expected <- rowMeans(feat_mat[comm_feat,])
     covariates <- c(covariates, "expected")
   }
   if (model == "glmGamPoi") {
