@@ -1,0 +1,25 @@
+Package: motifglm
+Title: Motif GLM enrichment
+Version: 0.0.1
+Authors@R:
+    person("Benjamin", "James", , "benjames@mit.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6228-055X"))
+Description: Enrichment of motifs
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    SummarizedExperiment,
+    sparseMatrixStats,
+    rhdf5,
+    GenomicRanges,
+    Matrix,
+    reshape2,
+    dplyr,
+    S4Vectors,
+    glmGamPoi,
+    rtracklayer,
+    BSgenome,
+    Biostrings
+LazyData: true
