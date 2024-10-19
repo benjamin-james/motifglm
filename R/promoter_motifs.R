@@ -1,4 +1,27 @@
-
+#' Match motifs against an annotation
+#'
+#' @param JASPAR A JASPAR SQLite file such as JASPAR2024::JASPAR2024()@db
+#' @param gff GFF or GTF file to be read in by rtracklayer::readGFF
+#' @param genome Genome string e.g. BSgenome.Hsapiens.UCSC.hg38
+#' @param upstream Integer upstream
+#' @param downstream Downstream base pairs of gene
+#' @param counts Whether to use counts or binary matches
+#' @param species JASPAR species parameter. By default will be set to the BSgenome species
+#' @param collection JASPAR collection
+#' @param width Width for motifmatchr
+#' @param cutoff P-value cutoff for motifmatchr
+#' @param bg Background frequency for motifmatchr
+#' @param kmer K-mer length to use for covariate adjustment
+#' @param percent_var Cumulative percent variance captured of PCA of K-mers to use as a covariate
+#' @return SummarizedExperiment object of genes by TF matrix of counts and associated metadata
+#' 
+#' @importFrom BSgenome getBSgenome
+#' @importFrom rtracklayer readGFF
+#' @importFrom S4Vectors metadata
+#' @importFrom GenomicRanges seqnames GRanges seqinfo trim promoters
+#' @importFrom IRanges IRanges
+#' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency
+#' @importFrom SummarizedExperiment rowRanges rowData
 #' @export
 promoter_motifs <- function(JASPAR, gff,
                             genome=NULL,

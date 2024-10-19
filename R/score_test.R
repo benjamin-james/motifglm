@@ -1,4 +1,5 @@
-
+#' Z is a matrix of features by cells
+#' 
 #' @importFrom Matrix Diagonal colSums
 score_test_inner <- function(X, Z, res, mu) {
   W <- Diagonal(x=mu)
@@ -19,7 +20,8 @@ score_test <- function(X, ...) {
 }
 
 #' Score test for default (numeric)
-#' 
+#'
+#' @importFrom BiocParallel bplapply
 #' @method score_test default
 #' @export
 score_test.default <- function(X, Z, Res, Mu, BPPARAM=bpparam()) {
@@ -36,20 +38,24 @@ score_test.default <- function(X, Z, Res, Mu, BPPARAM=bpparam()) {
 }
 
 #' Score test for DESeqDataSet
-#' 
+#'
+#' @importFrom SummarizedExperiment counts
+#' @importFrom DESeq2 design counts sizeFactors
 #' @method score_test DESeqDataSet
 #' @export
 score_test.DESeqDataSet <- function(dds, Z, BPPARAM=bpparam()) {
 ### dds <- DESeq(DESeqFromMatrix(M, design=formula, colData=rowData(prom)), sfType="poscounts", fitType="glmGamPoi")
-  score_test.default(X=DESeq2::design(dds),
-                     Z=Z,
-                     Res=SummarizedExperiment::assays(dds)$counts - SummarizedExperiment::assays(dds)$mu,
-                     Mu=SummarizedExperiment::assays(dds)$mu,
-                     BPPARAM=BPPARAM)
+    Mu <- assays(dds)$mu
+    score_test.default(X=design(dds),
+                       Z=Z,
+                       Res=counts(dds) - Mu,
+                       Mu=Mu,
+                       BPPARAM=BPPARAM)
 }
 
 #' Score test for glmGamPoi
-#' 
+#'
+#' @importFrom glmGamPoi residuals
 #' @method score_test glmGamPoi
 #' @export
 score_test.glmGamPoi <- function(fit, Z, BPPARAM=bpparam()) {
