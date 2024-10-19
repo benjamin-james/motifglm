@@ -21,7 +21,7 @@ score_test <- function(X, ...) {
 
 #' Score test for default (numeric)
 #'
-#' @importFrom BiocParallel bplapply
+#' @importFrom BiocParallel bplapply bpparam
 #' @method score_test default
 #' @export
 score_test.default <- function(X, Z, Res, Mu, BPPARAM=bpparam()) {
@@ -39,7 +39,7 @@ score_test.default <- function(X, Z, Res, Mu, BPPARAM=bpparam()) {
 
 #' Score test for DESeqDataSet
 #'
-#' @importFrom SummarizedExperiment counts
+#' @importFrom BiocParallel bpparam
 #' @importFrom DESeq2 design counts sizeFactors
 #' @method score_test DESeqDataSet
 #' @export
@@ -55,7 +55,8 @@ score_test.DESeqDataSet <- function(dds, Z, BPPARAM=bpparam()) {
 
 #' Score test for glmGamPoi
 #'
-#' @importFrom glmGamPoi residuals
+#' @importFrom BiocParallel bpparam
+#' @importFrom BiocGenerics residuals
 #' @method score_test glmGamPoi
 #' @export
 score_test.glmGamPoi <- function(fit, Z, BPPARAM=bpparam()) {
@@ -67,7 +68,8 @@ score_test.glmGamPoi <- function(fit, Z, BPPARAM=bpparam()) {
 }
 
 #' Score test for DGEGLM
-#' 
+#'
+#' @importFrom BiocParallel bpparam
 #' @method score_test DGEGLM
 #' @export
 score_test.DGEGLM <- function(fit, Z, BPPARAM=bpparam()) {

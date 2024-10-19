@@ -15,8 +15,7 @@ intron_motifs(
   cutoff = 5e-05,
   bg = "even",
   kmer = 2L,
-  percent_var = 99,
-  BPPARAM = bpparam()
+  percent_var = 99
 )
 }
 \arguments{

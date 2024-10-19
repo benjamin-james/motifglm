@@ -14,12 +14,19 @@ Imports:
     sparseMatrixStats,
     rhdf5,
     GenomicRanges,
+    GenomicFeatures,
     Matrix,
     reshape2,
     dplyr,
     S4Vectors,
     glmGamPoi,
+    DESeq2,
+    edgeR,
     rtracklayer,
     BSgenome,
-    Biostrings
+    Biostrings,
+    BiocParallel,
+    BiocGenerics,
+    motifmatchr,
+    TFBSTools
 LazyData: true

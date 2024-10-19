@@ -16,15 +16,15 @@
 #' @param percent_var Cumulative percent variance captured of PCA of K-mers to use as a covariate
 #' @return SummarizedExperiment object of genes by TF matrix of counts and associated metadata
 #'
-#' @importFrom Matrix Diagonal
+#' @importFrom Matrix Diagonal sparseMatrix
 #' @importFrom BSgenome getBSgenome seqinfo
 #' @importFrom rtracklayer readGFF
 #' @importFrom S4Vectors metadata
 #' @importFrom GenomicRanges seqnames GRanges seqinfo trim promoters
+#' @importFrom GenomicFeatures makeTxDbFromGFF intronicParts
 #' @importFrom IRanges IRanges
 #' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency
 #' @importFrom SummarizedExperiment rowRanges rowData colData assays
-#' @importFrom BiocParallel bpparam
 #' @export
 intron_motifs <- function(JASPAR, gff,
                           genome=NULL,
@@ -32,7 +32,7 @@ intron_motifs <- function(JASPAR, gff,
                           species=NULL,
                           collection = "CORE",
                           width = 7L, cutoff = 5e-05, bg="even",
-                          kmer = 2L, percent_var=99., BPPARAM=bpparam()) {
+                          kmer = 2L, percent_var=99.) {
   if (is.null(genome)) {
     warning("BSgenome unspecified. Using BSgenome.Hsapiens.UCSC.hg38")
     genome <- "BSgenome.Hsapiens.UCSC.hg38"
@@ -43,8 +43,8 @@ intron_motifs <- function(JASPAR, gff,
   }
   txdb <- makeTxDbFromGFF(gff, organism=species)
   introns <- intronicParts(txdb, linked.to.single.gene.only=TRUE)
-  introns <- introns[seqnames(introns) %in% seqnames(bsg)]
-  names(introns) <- paste0(introns$gene_id, "-", introns$intronic_part)
+  introns <- introns[seqlevels(introns) %in% seqlevels(bsg)]
+  names(introns) <- make.unique(paste0(introns$gene_id, "-", introns$intronic_part), sep="#")
   seqlevels(introns) <- seqlevels(bsg)
   seqinfo(introns) <- seqinfo(bsg)
   mo <- motif_overlap(introns, JASPAR, counts=counts, BSgenome=bsg,
@@ -59,10 +59,9 @@ intron_motifs <- function(JASPAR, gff,
                                                     gene_type=gene_type,
                                                     gene_length=end-start,
                                                     seqinfo=seqinfo(bsg)))
-  names(gene_gr) <- gene_gr$gene_id
   AF <- alphabetFrequency(getSeq(bsg, rowRanges(mo)),
                           as.prob=FALSE)
-  M <- sparseMatrix(i=match(rowData(mo)$gene_id, names(gene_gr)),
+  M <- sparseMatrix(i=match(rownames(mo), gene_gr$gene_id),
                     j=seq_len(nrow(mo)),
                     x=rep(1L, nrow(mo)),
                     dimnames=list(gene_gr$gene_name, rownames(mo)),
