@@ -41,9 +41,9 @@ intron_motifs <- function(JASPAR, gff,
   if (is.null(species)) {
     species <- S4Vectors::metadata(bsg)$organism
   }
-  txdb <- makeTxDbFromGFF(gff, organism=species)
+  txdb <- makeTxDbFromGFF(gff, organism=species, chrominfo=seqinfo(bsg))
   introns <- intronicParts(txdb, linked.to.single.gene.only=TRUE)
-  introns <- introns[seqlevels(introns) %in% seqlevels(bsg)]
+  introns <- introns[as.character(seqnames(introns)) %in% seqlevels(bsg)]
   names(introns) <- make.unique(paste0(introns$gene_id, "-", introns$intronic_part), sep="#")
   seqlevels(introns) <- seqlevels(bsg)
   seqinfo(introns) <- seqinfo(bsg)
