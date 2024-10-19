@@ -61,7 +61,7 @@ intron_motifs <- function(JASPAR, gff,
                                                     seqinfo=seqinfo(bsg)))
   AF <- alphabetFrequency(getSeq(bsg, rowRanges(mo)),
                           as.prob=FALSE)
-  M <- sparseMatrix(i=match(rownames(mo), gene_gr$gene_id),
+  M <- sparseMatrix(i=match(rowData(mo)$gene_id, gene_gr$gene_id),
                     j=seq_len(nrow(mo)),
                     x=rep(1L, nrow(mo)),
                     dimnames=list(gene_gr$gene_name, rownames(mo)),
