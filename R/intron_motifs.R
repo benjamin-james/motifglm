@@ -17,14 +17,14 @@
 #' @return SummarizedExperiment object of genes by TF matrix of counts and associated metadata
 #'
 #' @importFrom Matrix Diagonal sparseMatrix
-#' @importFrom BSgenome getBSgenome seqinfo
+#' @importFrom BSgenome getBSgenome seqinfo seqlevels
 #' @importFrom rtracklayer readGFF
 #' @importFrom S4Vectors metadata
-#' @importFrom GenomicRanges seqnames GRanges seqinfo trim promoters
+#' @importFrom GenomicRanges seqnames GRanges seqinfo seqlevels  trim promoters
 #' @importFrom GenomicFeatures makeTxDbFromGFF intronicParts
 #' @importFrom IRanges IRanges
 #' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency
-#' @importFrom SummarizedExperiment rowRanges rowData colData assays
+#' @importFrom SummarizedExperiment rowRanges rowData colData assays SummarizedExperiment
 #' @export
 intron_motifs <- function(JASPAR, gff,
                           genome=NULL,

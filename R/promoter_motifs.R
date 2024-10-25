@@ -34,47 +34,47 @@ promoter_motifs <- function(JASPAR, gff,
     warning("BSgenome unspecified. Using BSgenome.Hsapiens.UCSC.hg38")
     genome <- "BSgenome.Hsapiens.UCSC.hg38"
   }
-  bsg <- BSgenome::getBSgenome(genome)
+  bsg <- getBSgenome(genome)
   if (is.null(species)) {
-      species <- S4Vectors::metadata(bsg)$organism
+      species <- metadata(bsg)$organism
   }
   gff_file <- normalizePath(gff)
-  gff <- as.data.frame(rtracklayer::readGFF(gff))
+  gff <- as.data.frame(readGFF(gff))
   gff <- gff[gff$type == "gene",]
   gff$gene_name <- make.unique(gff$gene_name, sep="-")
-  gr <- with(gff[(gff$seqid %in% GenomicRanges::seqnames(bsg)),],
-             GenomicRanges::GRanges(seqnames=seqid,
-                                    ranges=IRanges::IRanges(start, end),
-                                    gene_name=gene_name,
-                                    gene_id=gene_id,
-                                    strand=strand,
-                                    gene_type=gene_type,
-                                    gene_length=end-start,
-                                    seqinfo=GenomicRanges::seqinfo(bsg)))
+  gr <- with(gff[(gff$seqid %in% seqnames(bsg)),],
+             GRanges(seqnames=seqid,
+                     ranges=IRanges(start, end),
+                     gene_name=gene_name,
+                     gene_id=gene_id,
+                     strand=strand,
+                     gene_type=gene_type,
+                     gene_length=end-start,
+                     seqinfo=seqinfo(bsg)))
   names(gr) <- gr$gene_name
-  prom.gr <- GenomicRanges::trim(GenomicRanges::promoters(gr, upstream=upstream, downstream=downstream))
+  prom.gr <- trim(promoters(gr, upstream=upstream, downstream=downstream))
   mo <- motif_overlap(prom.gr, JASPAR, counts=counts, BSgenome=bsg,
                       species=species, collection=collection, width=width, cutoff=cutoff, bg=bg)
-  af <- Biostrings::alphabetFrequency(Biostrings::getSeq(bsg, SummarizedExperiment::rowRanges(mo)), as.prob=TRUE)
-  SummarizedExperiment::rowData(mo)$GC <- rowSums(af[,c("C", "G")])
-  S4Vectors::metadata(mo) <- list(genome=genome,
-                                  species=species,
-                                  collection=collection,
-                                  width=width, cutoff=cutoff,
-                                  bg=bg, gff=attr(gff, "pragmas"),
-                                  upstream=upstream, downstream=downstream,
-                                  kmer=kmer, 
-                                  covariates="GC")
+  af <- alphabetFrequency(getSeq(bsg, rowRanges(mo)), as.prob=TRUE)
+  rowData(mo)$GC <- rowSums(af[,c("C", "G")])
+  metadata(mo) <- list(genome=genome,
+                       species=species,
+                       collection=collection,
+                       width=width, cutoff=cutoff,
+                       bg=bg, gff=attr(gff, "pragmas"),
+                       upstream=upstream, downstream=downstream,
+                       kmer=kmer, 
+                       covariates="GC")
   if (kmer > 0) {
-    dn <- Biostrings::oligonucleotideFrequency(Biostrings::getSeq(bsg, SummarizedExperiment::rowRanges(mo)), kmer, as.prob=TRUE)
+    dn <- oligonucleotideFrequency(getSeq(bsg, rowRanges(mo)), kmer, as.prob=TRUE)
     pca <- prcomp(dn)
     frac_var <- cumsum(pca$sdev**2)/sum(colVars(dn))
     n_pcs <- sum(frac_var <= percent_var / 100.)
     for (i in seq_len(ncol(pca$x))) {
-      SummarizedExperiment::rowData(mo)[[paste0("PC", i)]] <- pca$x[,i]
+        rowData(mo)[[paste0("PC", i)]] <- pca$x[,i]
     }
-    S4Vectors::metadata(mo)$percent_var <- frac_var*100
-    S4Vectors::metadata(mo)$covariates <- paste0("PC", seq_len(n_pcs))
+    metadata(mo)$percent_var <- frac_var*100
+    metadata(mo)$covariates <- paste0("PC", seq_len(n_pcs))
   }
   return(mo)
 }
