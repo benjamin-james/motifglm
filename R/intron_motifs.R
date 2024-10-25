@@ -17,10 +17,11 @@
 #' @return SummarizedExperiment object of genes by TF matrix of counts and associated metadata
 #'
 #' @importFrom Matrix Diagonal sparseMatrix
-#' @importFrom BSgenome getBSgenome seqinfo seqlevels
+#' @importFrom BSgenome getBSgenome seqinfo 
 #' @importFrom rtracklayer readGFF
 #' @importFrom S4Vectors metadata
-#' @importFrom GenomicRanges seqnames GRanges seqinfo seqlevels  trim promoters
+#' @importFrom GenomeInfoDb seqlevels
+#' @importFrom GenomicRanges seqnames GRanges seqinfo trim promoters
 #' @importFrom GenomicFeatures makeTxDbFromGFF intronicParts
 #' @importFrom IRanges IRanges
 #' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency

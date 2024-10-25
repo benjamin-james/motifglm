@@ -14,9 +14,10 @@
 #' @param percent_var Cumulative percent variance captured of PCA of K-mers to use as a covariate
 #' @return SummarizedExperiment object of genes by TF matrix of counts and associated metadata
 #'
-#' @importFrom BSgenome getBSgenome seqinfo seqlevels
+#' @importFrom BSgenome getBSgenome seqinfo
 #' @importFrom S4Vectors metadata
-#' @importFrom GenomicRanges GRanges seqinfo seqlevels
+#' @importFrom GenomicRanges GRanges seqinfo
+#' @importFrom GenomeInfoDb seqlevels
 #' @importFrom GenomicFeatures makeTxDbFromGFF intronicParts
 #' @importFrom IRanges IRanges
 #' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency
