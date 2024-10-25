@@ -32,6 +32,7 @@
 #' @param width Width for motifmatchr. Default=7
 #' @param BSgenome BSgenome object to match peaks against. NULL means hg38
 #' @param cutoff P-value cutoff for motifmatchr. Default=5e-05
+#' @importFrom motifmatchr matchMotifs
 #' @return RangedSummarizedExperiment of each motif's enrichment
 #' @export
 motif_overlap <- function(peakSet, jaspar, species="Homo sapiens", collection="CORE",
