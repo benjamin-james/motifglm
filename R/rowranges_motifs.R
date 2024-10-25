@@ -40,7 +40,7 @@ rowRanges_motifs <- function(se, JASPAR, genome=NULL,
     gr <- rowRanges(se)[as.character(seqnames(rowRanges(se))) %in% seqlevels(bsg)]
     seqlevels(gr) <- seqlevels(bsg)
     seqinfo(gr) <- seqinfo(bsg)
-    mo <- motif_overlap(unlist(trim(gr)), JASPAR, counts=counts, BSgenome=bsg,
+    mo <- motif_overlap(trim(gr), JASPAR, counts=counts, BSgenome=bsg,
                         species=species, collection=collection, width=width, cutoff=cutoff, bg=bg)
     af <- alphabetFrequency(getSeq(bsg, rowRanges(mo)), as.prob=TRUE)
     rowData(mo)$GC <- rowSums(af[,c("C", "G")])
