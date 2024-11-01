@@ -7,20 +7,32 @@ motif_fit <- function(motif_se, feat_mat=NULL, covariates=NULL, use_expected=TRU
   require(Matrix)
   require(sparseMatrixStats)
   require(SummarizedExperiment)
-  comm_feat <- intersect(rownames(feat_mat), rownames(motif_se))
-  stopifnot(length(comm_feat) > 1)
-  M <- t(as.matrix(assays(motif_se)$counts[comm_feat,]))
-  nzero <- sum(colSums(M) < 1)
-  if (nzero > 0) {
-    warning(paste0(nzero, " genes have zero total motif counts, discarding..."))
-    comm_feat <- intersect(colnames(M)[colSums(M) > 0], comm_feat) ### Throw out zero-sum genes
-    M <- M[,comm_feat]
+  if (!is.null(feat_mat)) {
+    comm_feat <- intersect(rownames(feat_mat), rownames(motif_se))
+    stopifnot(length(comm_feat) > 1)
+    M <- t(as.matrix(assays(motif_se)$counts[comm_feat,]))
+    nzero <- sum(colSums(M) < 1)
+    if (nzero > 0) {
+      warning(paste0(nzero, " genes have zero total motif counts, discarding..."))
+      comm_feat <- intersect(colnames(M)[colSums(M) > 0], comm_feat) ### Throw out zero-sum genes
+      M <- M[,comm_feat]
+    }
+  } else {
+    if (verbose) { cat("Not using any prior information i.e. mean counts...\n"); }
+    M <- t(as.matrix(assays(motif_se)$counts))
+    nzero <- sum(colSums(M) < 1)
+    if (nzero > 0) {
+      warning(paste0(nzero, " genes have zero total motif counts, discarding..."))
+      M <- M[,colSums(M) > 0]
+    }
   }
   if (is.null(covariates)) {
-      covariates <- metadata(motif_se)$covariates
+    if (verbose) { cat("Using default covariates...\n"); }
+    covariates <- metadata(motif_se)$covariates
   }
-  col_data <- as.data.frame(rowData(motif_se))[comm_feat, covariates, drop=FALSE]
+  col_data <- as.data.frame(rowData(motif_se))[colnames(M), covariates, drop=FALSE]
   if (use_expected && (ncol(feat_mat) > 1)) {
+    if (is.null(feat_mat)) { stop("If using expected counts, must provide a feature matrix..."); }
     col_data$expected <- rowMeans(feat_mat[comm_feat,])
     covariates <- c(covariates, "expected")
   }

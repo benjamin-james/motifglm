@@ -23,12 +23,12 @@
 #' @importFrom Biostrings alphabetFrequency getSeq oligonucleotideFrequency
 #' @importFrom SummarizedExperiment rowRanges rowData colData assays SummarizedExperiment
 #' @export
-rowRanges_motifs <- function(se, JASPAR, genome=NULL,
-                             counts=TRUE,
-                             species=NULL,
-                             collection = "CORE",
-                             width = 7L, cutoff = 5e-05, bg="even",
-                             kmer = 2L, percent_var=99.) {
+count_GRanges_motifs <- function(gr, JASPAR, genome=NULL,
+                                 counts=TRUE,
+                                 species=NULL,
+                                 collection = "CORE",
+                                 width = 7L, cutoff = 5e-05, bg="even",
+                                 kmer = 2L, percent_var=99.) {
     if (is.null(genome)) {
         warning("BSgenome unspecified. Using BSgenome.Hsapiens.UCSC.hg38")
         genome <- "BSgenome.Hsapiens.UCSC.hg38"
@@ -37,7 +37,7 @@ rowRanges_motifs <- function(se, JASPAR, genome=NULL,
     if (is.null(species)) {
         species <- S4Vectors::metadata(bsg)$organism
     }
-    gr <- rowRanges(se)[as.character(seqnames(rowRanges(se))) %in% seqlevels(bsg)]
+    gr <- gr[as.character(seqnames(gr)) %in% seqlevels(bsg)]
     seqlevels(gr) <- seqlevels(bsg)
     seqinfo(gr) <- seqinfo(bsg)
     mo <- motif_overlap(trim(gr), JASPAR, counts=counts, BSgenome=bsg,
@@ -45,12 +45,12 @@ rowRanges_motifs <- function(se, JASPAR, genome=NULL,
     af <- alphabetFrequency(getSeq(bsg, rowRanges(mo)), as.prob=TRUE)
     rowData(mo)$GC <- rowSums(af[,c("C", "G")])
     metadata(mo) <- list(genome=genome,
-                                    species=species,
-                                    collection=collection,
-                                    width=width, cutoff=cutoff,
-                                    bg=bg, 
-                                    kmer=kmer, 
-                                    covariates="GC")
+                         species=species,
+                         collection=collection,
+                         width=width, cutoff=cutoff,
+                         bg=bg, 
+                         kmer=kmer, 
+                         covariates="GC")
   if (kmer > 0) {
     dn <- oligonucleotideFrequency(getSeq(bsg, rowRanges(mo)), kmer, as.prob=TRUE)
     pca <- prcomp(dn)
