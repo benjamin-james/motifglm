@@ -31,7 +31,7 @@ motif_fit <- function(motif_se, feat_mat=NULL, covariates=NULL, use_expected=TRU
     covariates <- metadata(motif_se)$covariates
   }
   col_data <- as.data.frame(rowData(motif_se))[colnames(M), covariates, drop=FALSE]
-  if (use_expected && (ncol(feat_mat) > 1)) {
+  if (use_expected) {
     if (is.null(feat_mat)) { stop("If using expected counts, must provide a feature matrix..."); }
     col_data$expected <- rowMeans(feat_mat[comm_feat,])
     covariates <- c(covariates, "expected")
